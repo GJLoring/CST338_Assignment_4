@@ -58,8 +58,6 @@ class BarcodeImage implements Cloneable
    private boolean[][] image_data;            //This is where to store your image.
    
    /*
-    DATA
-
 public static final int MAX_HEIGHT = 30;    public static final int MAX_WIDTH = 65;   The exact internal dimensions of 2D data. 
 private boolean[][] image_data This is where to store your image.  If the incoming data is smaller than the max, instantiate memory anyway, but leave it blank (white). This data will be false for elements that are white, and true for elements that are black.
    METHODS
@@ -71,8 +69,7 @@ HINT  -  This constructor is a little tricky because the incoming image is not t
 Accessor and mutator for each bit in the image:  boolean getPixel(int row, int col) and boolean setPixel(int row, int col, boolean value);   For the getPixel(), you can use the return value for both the actual data and also the error condition -- so that we don't "create a scene" if there is an error; we just return false.
 Optional - A private utility method is highly recommended, but not required:  checkSize(String[] data)  It does the job of checking the incoming data for every conceivable size or null error.  Smaller is okay.  Bigger or null is not.
 Optional - A displayToConsole() method that is useful for debugging this class, but not very useful for the assignment at large.
-A clone() method that overrides the method of that name in Cloneable interface.   
-   
+A clone() method that overrides the method of that name in Cloneable interface.    
    */
 }
 
@@ -86,9 +83,7 @@ class DataMatrix implements BarcodeIO
    private int actualWidth;
    private int actualHeight;   
 /*
-   DATA
-
-public static final char BLACK_CHAR = '*';
+ public static final char BLACK_CHAR = '*';
 public static final char WHITE_CHAR = ' ';  
 private BarcodeImage image - a single internal copy of any image scanned-in OR passed-into the constructor OR created by BarcodeIO's generateImageFromText().
 private String text - a single internal copy of any text read-in OR passed-into the constructor OR created by BarcodeIO's translateImageToText().
@@ -106,8 +101,6 @@ private int computeSignalWidth() and private int computeSignalHeight() - Assumin
 Implementation of all BarcodeIO methods.
 Private method:
 private void cleanImage() - This private method will make no assumption about the placement of the "signal" within a passed-in BarcodeImage.  In other words, the in-coming BarcodeImage may not be lower-left justified.  Here's an example of  the placement of such an un-standardized image:
-
-
 */
 }
 
