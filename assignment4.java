@@ -194,42 +194,122 @@ class DataMatrix implements BarcodeIO
     accepts some image, represented as a BarcodeImage object to be described below, and stores a copy of this image.  Depending on the sophistication of the implementing class, the internally stored image might be an exact clone of the parameter, or a refined, cleaned and processed image.  Technically, there is no requirement that an implementing class use a BarcodeImage object internally, although we will do so.  For the basic DataMatrix option, it will be an exact clone.  Also, no translation is done here - i.e., any text string that might be part of an implementing class is not touched, updated or defined during the scan.
    */
    public boolean scan(BarcodeImage bc){
-      return true;
+       try
+      {
+         this.image = bc.clone();
+         cleanImage();
+         actualWidth = computeSignalWidth();
+         actualHeight = computeSignalHeight();
+         return true;
+      }
+      catch(CloneNotSupportedException e)
+      {
+         //empty, no action
+      }
+      return false;
    }
    
    /*
    accepts a text string to be eventually encoded in an image. No translation is done here - i.e., any BarcodeImage that might be part of an implementing class is not touched, updated or defined during the reading of the text.
    */
    public boolean readText(String text){
-      return true;
+      if(text == null)
+      {
+         return false;
+      }
+      else
+      {
+         this.text = text;
+         return true;
+      }
    }
    
    /*
    Not technically an I/O operation, this method looks at the internal text stored in the implementing class and produces a companion BarcodeImage, internally (or an image in whatever format the implementing class uses).  After this is called, we expect the implementing object to contain a fully-defined image and text that are in agreement with each other.
    */
    public boolean generateImageFromText(){
-      return true;
+     if(text == null)
+      {
+         return false;
+      }
+      else
+      {
+         image = new BarcodeImage();
+         for(int i = 0; i < text.length(); i++)
+         {
+            image.setPixel(BarcodeImage.MAX_HEIGHT - 1, i, true);
+            WriteCharToCol(0, 255);
+         }
+         for(int i = 1; i < text.length() + 1; i++)
+         {
+            if(!WriteCharToCol(i, (int) text.charAt(i)))
+            {
+               return false;
+            }
+         }
+         actualWidth = computeSignalWidth();
+         actualHeight = computeSignalHeight();
+         return true;
+      }
    }
    
    /*
     Not technically an I/O operation, this method looks at the internal image stored in the implementing class, and produces a companion text string, internally.  After this is called, we expect the implementing object to contain a fully defined image and text that are in agreement with each other.
    */
    public boolean translateImageToText(){
+         String newText = "";
+      int characterValue;
+      
+      if(image == null)
+      {
+         return false;
+      }
+      else
+      {
+         for(int i = 0; i < text.length(); i++)
+         {
+            characterValue = 0;
+            for(int j = BarcodeImage.MAX_HEIGHT - 2; j > BarcodeImage.MAX_HEIGHT - 10; j--)
+            {
+               if(image.getPixel(j, i))
+               {
+                  characterValue += Math.pow(2, j - BarcodeImage.MAX_HEIGHT - 2);
+               }
+               newText += (char) characterValue;
+            }
+         }
+         text = newText;
+         actualWidth = computeSignalWidth();
+         actualHeight = computeSignalHeight();
          return true;
+      }
       }
 
    /*
    prints out the text string to the console.
    */
    public void displayTextToConsole(){
-         return;
+         System.out.println(text);
       }
 
    /*
    prints out the image to the console.  In our implementation, we will do this in the form of a dot-matrix of blanks and asterisks, e.g.,
    */
    public void displayImageToConsole(){
-         return;
+          for(int i = 0; i < text.length() + 1; i++)
+      {
+         for(int j = BarcodeImage.MAX_HEIGHT - actualHeight - 10; j < BarcodeImage.MAX_HEIGHT; j--)
+         {
+            if(image.getPixel(i, j))
+            {
+               System.out.println(BLACK_CHAR);
+            }
+            else
+            {
+               System.out.println(WHITE_CHAR);
+            }
+         }
+      }
       }
 
    //Private method:
