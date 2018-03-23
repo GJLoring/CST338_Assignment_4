@@ -122,7 +122,21 @@ Accessor and mutator for each bit in the image:  boolean getPixel(int row, int c
 Optional - A private utility method is highly recommended, but not required:  checkSize(String[] data)  It does the job of checking the incoming data for every conceivable size or null error.  Smaller is okay.  Bigger or null is not.
 Optional - A displayToConsole() method that is useful for debugging this class, but not very useful for the assignment at large.
 A clone() method that overrides the method of that name in Cloneable interface.    
+   
    */
+   
+   boolean getPixel(int row, int col){
+      return true;
+   }
+   
+   boolean setPixel(int row, int col, boolean value){
+      return true;
+   } 
+   
+   @Override
+   protected BarcodeImage clone() {
+      return this;
+   }
 }
 
 //Phase 3
@@ -148,35 +162,15 @@ class DataMatrix implements BarcodeIO
 
    /* - sets the image but leaves the text at its default value.  Call scan() and avoid duplication of code here.*/
    DataMatrix(BarcodeImage image){
-      
+      scan(image);
    }
    
    /*
     - sets the text but leaves the image at its default value. Call readText() and avoid duplication of code here.
    */
    DataMatrix(String text){
-      
+      readText(text);
    }
-   
-   /*
-    - a mutator for text.  Like the constructor;  in fact it is called by the constructor.
-
-   private void readText(String text){
-      return;
-   }   */
-   
-   /*
-   - a mutator for image.  Like the constructor;  in fact it is called by the constructor.  Besides calling the clone() method of the BarcodeImage class, this method will do a couple of things including calling cleanImage() and then set the actualWidth and actualHeight.  Because scan() calls clone(), it should deal with the CloneNotSupportedException by embeddingthe clone() call within a try/catch block.  Don't attempt to hand-off the exception using a "throws" clause in the function header since that will not be compatible with the underlying BarcodeIO interface.  The catches(...) clause can have an empty body that does nothing.
-   */
-   /*
-   private void scan(BarcodeImage image) {
-      //try 
-         //clone() method of the BarcodeImage class, this method will do a couple of things including calling 
-      //catch
-      //cleanImage() and then set the actualWidth and actualHeight.  
-      return;
-   }
-   */
    
    //Accessors for actualWidth and actualHeight but no mutators! (why?)
    /*
@@ -194,7 +188,7 @@ class DataMatrix implements BarcodeIO
     accepts some image, represented as a BarcodeImage object to be described below, and stores a copy of this image.  Depending on the sophistication of the implementing class, the internally stored image might be an exact clone of the parameter, or a refined, cleaned and processed image.  Technically, there is no requirement that an implementing class use a BarcodeImage object internally, although we will do so.  For the basic DataMatrix option, it will be an exact clone.  Also, no translation is done here - i.e., any text string that might be part of an implementing class is not touched, updated or defined during the scan.
    */
    public boolean scan(BarcodeImage bc){
-       try
+      try
       {
          this.image = bc.clone();
          cleanImage();
@@ -202,7 +196,7 @@ class DataMatrix implements BarcodeIO
          actualHeight = computeSignalHeight();
          return true;
       }
-      catch(CloneNotSupportedException e)
+      catch(Exception e) //catch(CloneNotSupportedException e)
       {
          //empty, no action
       }
@@ -311,6 +305,10 @@ class DataMatrix implements BarcodeIO
          }
       }
       }
+
+   private boolean WriteCharToCol(int col, int code){
+      return true;
+   }
 
    //Private method:
    /* - This private method will make no assumption about the placement of the "signal" within a passed-in BarcodeImage.  In other words, the in-coming BarcodeImage may not be lower-left justified.  Here's an example of  the placement of such an un-standardized image:
