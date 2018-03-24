@@ -92,6 +92,9 @@ interface BarcodeIO{
 }
 
 
+/*********************PHASE 2 ***************************/
+/********************************************************/
+
 //Phase 2:
 class BarcodeImage implements Cloneable
 {
@@ -99,45 +102,124 @@ class BarcodeImage implements Cloneable
    public static final int MAX_WIDTH = 65;    //The exact internal dimensions of 2D data. 
    private boolean[][] image_data;            //This is where to store your image.
    
-   /*
-public static final int MAX_HEIGHT = 30;    public static final int MAX_WIDTH = 65;   The exact internal dimensions of 2D data. 
-private boolean[][] image_data This is where to store your image.  If the incoming data is smaller than the max, instantiate memory anyway, but leave it blank (white). This data will be false for elements that are white, and true for elements that are black.
-   METHODS
-*/
-
    //Constructors  Two minimum, but you could have others:
    //Default Constructor -  instantiates a 2D array (MAX_HEIGHT x MAX_WIDTH) and stuffs it all with blanks (false).
-   BarcodeImage(){
-      
+   
+   public BarcodeImage()
+   {
+	   System.out.println("Default Constructor");
+	   this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
+	   
+	   
+       for(int i = 0; i < MAX_HEIGHT; i++)
+	   {
+	      for(int j = 0; j < MAX_WIDTH; j++)
+	      {
+	         image_data[i][j] = false;
+	      }
+	   }
    }
    //BarcodeImage(String[] str_data) -takes a 1D array of Strings and converts it to the internal 2D array of booleans. 
    /*
-   HINT  -  This constructor is a little tricky because the incoming image is not the necessarily same size as the internal matrix.  So, you have to pack it into the lower-left corner of the double array, causing a bit of stress if you don't like 2D counting.  This is good 2D array exercise.  The DataMatrix class will make sure that there is no extra space below or left of the image so this constructor can put it into the lower-left corner of the array.
+   HINT  -  This constructor is a little tricky because the incoming image is not the necessarily same size as the internal matrix.
+   So, you have to pack it into the lower-left corner of the double array, causing a bit of stress if you don't like 2D counting. 
+   This is good 2D array exercise.  The DataMatrix class will make sure that there is no extra space below or left of the image
+   so this constructor can put it into the lower-left corner of the array.
    */
-   BarcodeImage(String[] str_data) {
+   
+   
+   
+   public BarcodeImage(String[] str_data)
+   {
+	 System.out.println("2nd Constructor");
+     this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
+     
+     
+     for(int i = 0, k = 0; i < MAX_HEIGHT && k < str_data.length; i++, k++)
+     {
+        for(int j = 0; j < MAX_WIDTH && j < str_data[k].length(); j++)
+        {
+           if(str_data[k].charAt(j) == ' ')
+           this.image_data[i][j] = false;
+           else
+           this.image_data[i][j] = true;
       
+        }
+     }
    }
+   
+   public boolean setPixel(int row, int col, boolean value)
+   {
+	   System.out.println("setPixel");
+	   if(isValid(row, col))
+	   {
+		   return this.image_data[row][col] = value;
+	   }
+	   return false;
+   }
+   
+   
+   
+   public boolean getPixel(int row, int col)
+   {
+	   System.out.println("getPixel");
+	   if(isValid(row, col))
+	   {
+		   return this.image_data[row][col];
+	   }
+	
+	   return false;
+   }
+   
+
+   
+   private boolean isValid(int row, int col)
+   {
+	   System.out.println("isValid");
+	   return ((row >= 0 && row < MAX_HEIGHT) && (col >=0 && col < MAX_WIDTH));
+   }
+    
+   public void displayToConsole()
+   {
+      for (int i = 0; i < MAX_HEIGHT; i++)
+      {
+         for (int j = 0; j < MAX_WIDTH; j++)
+         {
+            if (this.getPixel(i, j))
+            {
+               System.out.print("*");
+            }
+            else
+            {
+               System.out.print(" ");
+            }
+         }
+         System.out.println();
+      }
+   }
+   
+   public BarcodeImage clone()
+   {
+	   try {
+		   return(BarcodeImage) super.clone();
+	   }
+	   catch (CloneNotSupportedException e)
+	   {
+		   return null;
+	   }
+   }
+} 
+
 /*
 Accessor and mutator for each bit in the image:  boolean getPixel(int row, int col) and boolean setPixel(int row, int col, boolean value);   For the getPixel(), you can use the return value for both the actual data and also the error condition -- so that we don't "create a scene" if there is an error; we just return false.
 Optional - A private utility method is highly recommended, but not required:  checkSize(String[] data)  It does the job of checking the incoming data for every conceivable size or null error.  Smaller is okay.  Bigger or null is not.
 Optional - A displayToConsole() method that is useful for debugging this class, but not very useful for the assignment at large.
 A clone() method that overrides the method of that name in Cloneable interface.    
-   
    */
-   
-   boolean getPixel(int row, int col){
-      return true;
-   }
-   
-   boolean setPixel(int row, int col, boolean value){
-      return true;
-   } 
-   
-   @Override
-   protected BarcodeImage clone() {
-      return this;
-   }
-}
+
+/******************** END PHASE 2 ***********************/
+/********************************************************/
+
 
 //Phase 3
 class DataMatrix implements BarcodeIO
