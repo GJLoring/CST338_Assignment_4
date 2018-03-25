@@ -34,7 +34,6 @@ public class assignment4
             "                                               "
 
          };      
-               
             
          
          String[] sImageIn_2 =
@@ -57,15 +56,15 @@ public class assignment4
                "                                          "
 
          };
-        
+     
          BarcodeImage bc = new BarcodeImage(sImageIn);
          DataMatrix dm = new DataMatrix(bc);
-        
+
          // First secret message
          dm.translateImageToText();
          dm.displayTextToConsole();
          dm.displayImageToConsole();
-         
+
          // second secret message
          bc = new BarcodeImage(sImageIn_2);
          dm.scan(bc);
@@ -107,17 +106,17 @@ class BarcodeImage implements Cloneable
    
    public BarcodeImage()
    {
-	   System.out.println("Default Constructor");
-	   this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
-	   
-	   
+      System.out.println("Default Constructor");
+      this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
+      
+      
        for(int i = 0; i < MAX_HEIGHT; i++)
-	   {
-	      for(int j = 0; j < MAX_WIDTH; j++)
-	      {
-	         image_data[i][j] = false;
-	      }
-	   }
+      {
+         for(int j = 0; j < MAX_WIDTH; j++)
+         {
+            image_data[i][j] = false;
+         }
+      }
    }
    //BarcodeImage(String[] str_data) -takes a 1D array of Strings and converts it to the internal 2D array of booleans. 
    /*
@@ -126,57 +125,52 @@ class BarcodeImage implements Cloneable
    This is good 2D array exercise.  The DataMatrix class will make sure that there is no extra space below or left of the image
    so this constructor can put it into the lower-left corner of the array.
    */
-   
-   
-   
    public BarcodeImage(String[] str_data)
    {
-	 System.out.println("2nd Constructor");
      this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
      
      
-     for(int i = 0, k = 0; i < MAX_HEIGHT && k < str_data.length; i++, k++)
-     {
-        for(int j = 0; j < MAX_WIDTH && j < str_data[k].length(); j++)
-        {
-           if(str_data[k].charAt(j) == ' ')
-           this.image_data[i][j] = false;
-           else
-           this.image_data[i][j] = true;
-      
-        }
-     }
+      for(int i = 0, k = 0; i < MAX_HEIGHT && k < str_data.length; i++, k++)
+      {
+         for(int j = 0; j < MAX_WIDTH && j < str_data[k].length(); j++)
+         {
+            if(str_data[k].charAt(j) == ' ')
+               this.image_data[i][j] = false;
+            else
+               this.image_data[i][j] = true;
+         }
+      }
    }
    
    public boolean setPixel(int row, int col, boolean value)
    {
-	   System.out.println("setPixel");
-	   if(isValid(row, col))
-	   {
-		   return this.image_data[row][col] = value;
-	   }
-	   return false;
+      //System.out.println("setPixel");
+      if(isValid(row, col))
+      {
+         return this.image_data[row][col] = value;
+      }
+      return false;
    }
    
    
    
    public boolean getPixel(int row, int col)
    {
-	   System.out.println("getPixel");
-	   if(isValid(row, col))
-	   {
-		   return this.image_data[row][col];
-	   }
-	
-	   return false;
+      //System.out.println("getPixel");
+      if(isValid(row, col))
+      {
+         return image_data[row][col];
+      }
+   
+      return false;
    }
    
 
    
    private boolean isValid(int row, int col)
    {
-	   System.out.println("isValid");
-	   return ((row >= 0 && row < MAX_HEIGHT) && (col >=0 && col < MAX_WIDTH));
+      //System.out.println("isValid");
+      return ((row >= 0 && row < MAX_HEIGHT) && (col >=0 && col < MAX_WIDTH));
    }
     
    public void displayToConsole()
@@ -198,15 +192,20 @@ class BarcodeImage implements Cloneable
       }
    }
    
-   public BarcodeImage clone()
+   public BarcodeImage clone() throws CloneNotSupportedException
    {
-	   try {
-		   return(BarcodeImage) super.clone();
-	   }
-	   catch (CloneNotSupportedException e)
-	   {
-		   return null;
-	   }
+      BarcodeImage newObject = (BarcodeImage)super.clone();
+      newObject.image_data = image_data.clone();
+      return newObject;
+   }
+   
+   public static int getMaxHeight()
+   {
+      return MAX_HEIGHT;
+   }
+   public static int getMaxWidth()
+   {
+      return MAX_WIDTH;
    }
 } 
 
@@ -237,9 +236,9 @@ class DataMatrix implements BarcodeIO
    */
    DataMatrix(){
       this.image = null;
-      this.actualWidth=0;
-      this.actualWidth=0;
-      this.text="";
+      this.actualWidth = 0;
+      this.actualWidth = 0;
+      this.text = "";
    }
 
    /* - sets the image but leaves the text at its default value.  Call scan() and avoid duplication of code here.*/
@@ -254,16 +253,45 @@ class DataMatrix implements BarcodeIO
       readText(text);
    }
    
+   public int getActualWidth()
+   {
+      return actualWidth;
+   }
+   
+   public int getActualHeight()
+   {
+      return actualHeight;
+   }
+   
    //Accessors for actualWidth and actualHeight but no mutators! (why?)
    /*
           - Assuming that the image is correctly situated in the lower-left corner of the larger boolean array, these methods use the "spine" of the array (left and bottom BLACK) to determine the actual size.
    */
    private int computeSignalWidth(){
-      return 0;
-   }
-   private int computeSignalHeight(){
-         return 0;
+      int width = 0;
+ 
+      for(int col = 0; col < BarcodeImage.getMaxWidth(); col++)
+      {
+         if(image.getPixel((BarcodeImage.getMaxHeight()) - 1, col) == true)
+         {
+            width++;
+         }
       }
+      return width;
+   }
+   
+   private int computeSignalHeight(){
+      int height = 0;
+      
+      for(int row = 0; row < BarcodeImage.getMaxHeight(); row++)
+       {
+         if(image.getPixel(row, 0) == true)
+         {
+            height++;
+         }
+       }
+       return height;
+   }
 
    //Implementation of all BarcodeIO methods.
    /*
@@ -272,24 +300,24 @@ class DataMatrix implements BarcodeIO
    public boolean scan(BarcodeImage bc){
       try
       {
-         this.image = bc.clone();
-         cleanImage();
-         actualWidth = computeSignalWidth();
-         actualHeight = computeSignalHeight();
-         return true;
+         image = bc.clone();
+
       }
-      catch(Exception e) //catch(CloneNotSupportedException e)
+      catch(CloneNotSupportedException e) //Exception e
       {
-         //empty, no action
+         //nothing is done
       }
-      return false;
+      cleanImage();
+      actualWidth = computeSignalWidth();
+      actualHeight = computeSignalHeight();
+      return true;
    }
    
    /*
    accepts a text string to be eventually encoded in an image. No translation is done here - i.e., any BarcodeImage that might be part of an implementing class is not touched, updated or defined during the reading of the text.
    */
    public boolean readText(String text){
-      if(text == null)
+      if(text.length() > BarcodeImage.getMaxWidth() - 2)
       {
          return false;
       }
@@ -304,62 +332,98 @@ class DataMatrix implements BarcodeIO
    Not technically an I/O operation, this method looks at the internal text stored in the implementing class and produces a companion BarcodeImage, internally (or an image in whatever format the implementing class uses).  After this is called, we expect the implementing object to contain a fully-defined image and text that are in agreement with each other.
    */
    public boolean generateImageFromText(){
-     if(text == null)
+      if(text.length() > BarcodeImage.getMaxWidth() - 2)
       {
          return false;
       }
-      else
+      cleanImage();
+      char colChar;
+      byte charVal;
+      int k;
+      
+      //fill borders on the right and left
+      for(k = BarcodeImage.getMaxHeight() - 1; k > BarcodeImage.getMaxHeight() - 11; k--)
       {
-         image = new BarcodeImage();
-         for(int i = 0; i < text.length(); i++)
+         //sets left
+         image.setPixel(k, 0, true);
+         if(k % 2 == 1)
          {
-            image.setPixel(BarcodeImage.MAX_HEIGHT - 1, i, true);
-            WriteCharToCol(0, 255);
+            //sets right
+            image.setPixel(k, text.length() + 1, true);
          }
-         for(int i = 1; i < text.length() + 1; i++)
-         {
-            if(!WriteCharToCol(i, (int) text.charAt(i)))
-            {
-               return false;
-            }
-         }
-         actualWidth = computeSignalWidth();
-         actualHeight = computeSignalHeight();
-         return true;
       }
+         
+         //fill borders bottom and top
+       for(k = 1; k < text.length() + 1; k++)
+       {
+          //sets bottom
+          image.setPixel(BarcodeImage.getMaxHeight() - 1, k, true);
+          if(k % 2 == 0)
+          {
+             //sets top
+             image.setPixel(BarcodeImage.getMaxHeight() - 10, k, true);
+          }
+          
+          //Filling columns
+          colChar = text.charAt(k - 1);
+          charVal = (byte)colChar;
+          if(!writeCharToCol(k, charVal))
+          {
+             return false;
+          }  
+       }
+       //Use new image data to set actualHeight and actualWidth
+       actualWidth = computeSignalWidth();
+       actualHeight = computeSignalHeight();
+       return true;
    }
    
+   private boolean writeCharToCol(int k, int charVal)
+   {
+      if((k < 1 || k >= BarcodeImage.getMaxWidth() || charVal < 0 || charVal > 127))
+      {
+         return false;
+      }
+      
+      //actualHeight can't be used yet because it hasn't been set for new image
+      for(int i = 0, row = BarcodeImage.getMaxHeight() - 9; i < 8; i++, row++)
+      {
+         if((charVal & (1 << (7 - i))) > 0)
+         {
+            image.setPixel(row, k, true);
+         }
+      }
+      return true;
+   }
+
    /*
     Not technically an I/O operation, this method looks at the internal image stored in the implementing class, and produces a companion text string, internally.  After this is called, we expect the implementing object to contain a fully defined image and text that are in agreement with each other.
    */
    public boolean translateImageToText(){
-         String newText = "";
-      int characterValue;
+      int column;
+      String newText = "";
+      for(column = 1; column < actualWidth - 1; column++)
+      {
+         newText += readCharFromCol(column);
+      }
+      return readText(newText);
+   }
+
+   private char readCharFromCol(int column)
+   {
+      int powValue, row;
+      byte charValue = 0;
       
-      if(image == null)
+      for(row = BarcodeImage.getMaxHeight() - 9, powValue = 7;
+          row < BarcodeImage.getMaxHeight() - 1; row++, powValue--)
       {
-         return false;
-      }
-      else
-      {
-         for(int i = 0; i < text.length(); i++)
+         if(image.getPixel(row, column))
          {
-            characterValue = 0;
-            for(int j = BarcodeImage.MAX_HEIGHT - 2; j > BarcodeImage.MAX_HEIGHT - 10; j--)
-            {
-               if(image.getPixel(j, i))
-               {
-                  characterValue += Math.pow(2, j - BarcodeImage.MAX_HEIGHT - 2);
-               }
-               newText += (char) characterValue;
-            }
+            charValue += (byte) Math.pow(2, powValue);
          }
-         text = newText;
-         actualWidth = computeSignalWidth();
-         actualHeight = computeSignalHeight();
-         return true;
       }
-      }
+      return (char)charValue;
+   }
 
    /*
    prints out the text string to the console.
@@ -372,31 +436,120 @@ class DataMatrix implements BarcodeIO
    prints out the image to the console.  In our implementation, we will do this in the form of a dot-matrix of blanks and asterisks, e.g.,
    */
    public void displayImageToConsole(){
-          for(int i = 0; i < text.length() + 1; i++)
-      {
-         for(int j = BarcodeImage.MAX_HEIGHT - actualHeight - 10; j < BarcodeImage.MAX_HEIGHT; j--)
+      //these two println are for reference only, can be deleted at the end
+      System.out.println("\n");
+         int column, row;
+         
+         //border top row
+         for(column = 0; column < actualWidth + 2; column++)
          {
-            if(image.getPixel(i, j))
-            {
-               System.out.println(BLACK_CHAR);
-            }
-            else
-            {
-               System.out.println(WHITE_CHAR);
-            }
+            System.out.print("-");
          }
+         System.out.print("\n");
+         
+         //added border characters for rows
+         for(row = BarcodeImage.getMaxHeight() - actualHeight;
+             row < BarcodeImage.getMaxHeight(); row++)
+         {
+            System.out.print("|");
+            for(column = 0; column < actualWidth; column++)
+            {
+               if(image.getPixel(row, column))
+               {
+                  System.out.print("*");
+               }
+               else
+               {
+                  System.out.print(" ");
+               }
+            }
+            System.out.print("|\n");
+         }
+         //border bottom row
+         for(column = 0; column < actualWidth + 2; column++)
+         {
+            System.out.print("-");
+         }
+         System.out.print("\n");
       }
-      }
-
-   private boolean WriteCharToCol(int col, int code){
-      return true;
-   }
 
    //Private method:
    /* - This private method will make no assumption about the placement of the "signal" within a passed-in BarcodeImage.  In other words, the in-coming BarcodeImage may not be lower-left justified.  Here's an example of  the placement of such an un-standardized image:
    */
    private void cleanImage(){
+         int inputColumn, inputRow;
+         int outputColumn = 0;
+         int outputRow = 0; 
+         int offsetColumn = 0;
+         int offsetRow = 0;
+         boolean offsetFound = false;        
+
+         // Find the lower left corner
+         for (inputColumn = 0; inputColumn < BarcodeImage.getMaxWidth(); inputColumn++){
+            for (inputRow =  BarcodeImage.getMaxHeight(); inputRow > 0;  inputRow--){
+               if(image.getPixel(inputRow, inputColumn) & (offsetFound == false)){
+                  offsetColumn = inputColumn;
+                  offsetRow = BarcodeImage.getMaxHeight() - inputRow-1;  
+                  offsetFound = true;  
+               }
+               if(offsetFound){
+                  image.setPixel(inputRow+offsetRow, inputColumn-offsetColumn, image.getPixel(inputRow, inputColumn));  
+                  image.setPixel(inputRow, inputColumn,false);
+               } 
+            }
+         }
       return;
    }
 }
 
+/*  Program Output
+
+Optical Barcode Reader
+
+CSUMB CSIT online program is top notch.
+
+
+-------------------------------------------
+|* * * * * * * * * * * * * * * * * * * * *|
+|*                                       *|
+|****** **** ****** ******* ** *** *****  |
+|*     *    ******************************|
+|* **    * *        **  *    * * *   *    |
+|*   *    *  *****    *   * *   *  **  ***|
+|*  **     * *** **   **  *    **  ***  * |
+|***  * **   **  *   ****    *  *  ** * **|
+|*****  ***  *  * *   ** ** **  *   * *   |
+|*****************************************|
+-------------------------------------------
+You did it!  Great work.  Celebrate.
+
+
+----------------------------------------
+|* * * * * * * * * * * * * * * * * * * |
+|*                                    *|
+|**** *** **   ***** ****   *********  |
+|* ************ ************ **********|
+|** *      *    *  * * *         * *   |
+|***   *  *           * **    *      **|
+|* ** * *  *   * * * **  *   ***   *** |
+|* *           **    *****  *   **   **|
+|****  *  * *  * **  ** *   ** *  * *  |
+|**************************************|
+----------------------------------------
+What a great resume builder this is!
+
+
+----------------------------------------
+|* * * * * * * * * * * * * * * * * * * |
+|*                                    *|
+|***** * ***** ****** ******* **** **  |
+|* ************************************|
+|**  *    *  * * **    *    * *  *  *  |
+|* *               *    **     **  *  *|
+|**  *   * * *  * ***  * ***  *        |
+|**      **    * *    *     *    *  * *|
+|** *  * * **   *****  **  *    ** *** |
+|**************************************|
+----------------------------------------
+
+*/
