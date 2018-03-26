@@ -1,8 +1,10 @@
 /*
  * Assignment M4 Optical Barcode Readers
- * Program Description TODO
+ * Program Description: Write a java program (Optical Barcode Readers) that combines
+ * 2D arrays, interfaces (including Cloneable), and a very active industrial application,
+ * optical scanning and pattern recognition.
  * Authors: Christian Guerrero, Jose Garcia, Grace Alvarez, Gabriel Loring
- * Last Changed: March 21th, 2018
+ * Last Changed: March 25th, 2018
  * 
  */
 
@@ -90,11 +92,7 @@ interface BarcodeIO{
    public void displayImageToConsole();
 }
 
-
-/*********************PHASE 2 ***************************/
-/********************************************************/
-
-//Phase 2:
+//Phase 2
 class BarcodeImage implements Cloneable
 {
    public static final int MAX_HEIGHT = 30;    //The exact internal dimensions of 2D data. 
@@ -106,7 +104,6 @@ class BarcodeImage implements Cloneable
    
    public BarcodeImage()
    {
-      System.out.println("Default Constructor");
       this.image_data = new boolean[MAX_HEIGHT][MAX_WIDTH];
       
       
@@ -144,15 +141,12 @@ class BarcodeImage implements Cloneable
    
    public boolean setPixel(int row, int col, boolean value)
    {
-      //System.out.println("setPixel");
       if(isValid(row, col))
       {
          return this.image_data[row][col] = value;
       }
       return false;
    }
-   
-   
    
    public boolean getPixel(int row, int col)
    {
@@ -165,11 +159,8 @@ class BarcodeImage implements Cloneable
       return false;
    }
    
-
-   
    private boolean isValid(int row, int col)
    {
-      //System.out.println("isValid");
       return ((row >= 0 && row < MAX_HEIGHT) && (col >=0 && col < MAX_WIDTH));
    }
     
@@ -215,10 +206,6 @@ Optional - A private utility method is highly recommended, but not required:  ch
 Optional - A displayToConsole() method that is useful for debugging this class, but not very useful for the assignment at large.
 A clone() method that overrides the method of that name in Cloneable interface.    
    */
-
-/******************** END PHASE 2 ***********************/
-/********************************************************/
-
 
 //Phase 3
 class DataMatrix implements BarcodeIO
